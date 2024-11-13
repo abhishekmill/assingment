@@ -47,7 +47,7 @@ const FlightPath = ({ position, flight, setflight, setdestiniation }) => {
 
   useFrame((state, delta) => {
     if (!flight) {
-      return;
+      
       setT((t) => (t >= 1 ? 0 : t + delta * 0.0));
     }
 
