@@ -21,13 +21,13 @@ const FlightPath = ({ position, flight, setflight, setdestiniation }) => {
     return new THREE.CatmullRomCurve3(
       [
         delhi,
-        new THREE.Vector3(0, 0.5, -6),
+        new THREE.Vector3(0, 0, -6),
         new THREE.Vector3(0, 2, 0),
         new THREE.Vector3(3, 2, 2),
         new THREE.Vector3(2, 0.5, 7),
         bengaluru,
-        // new THREE.Vector3(-5, 1, 8),
-        // new THREE.Vector3(-2, 2, 7),
+        new THREE.Vector3(-8, 0, 5),
+        new THREE.Vector3(-9, 1, 3),
         new THREE.Vector3(-8, 0.5, 0),
       ],
       true,
@@ -46,9 +46,14 @@ const FlightPath = ({ position, flight, setflight, setdestiniation }) => {
   const [isFlying, setIsFlying] = useState(false); // Track if the airplane is flying
 
   useFrame((state, delta) => {
-    if (!flight) return; // Don't animate if not flying
+    if (!flight) {
+      return;
+      setT((t) => (t >= 1 ? 0 : t + delta * 0.0));
+    }
 
-    setT((t) => (t >= 1 ? 0 : t + delta * 0.09)); // Adjust speed by changing 0.09
+    if (flight) {
+      setT((t) => (t >= 1 ? 0 : t + delta * 0.1));
+    }
 
     // Target position and tangent on the path
     const targetPosition = curve.getPointAt(t);
@@ -66,12 +71,12 @@ const FlightPath = ({ position, flight, setflight, setdestiniation }) => {
 
       // Smoothly interpolate rotation by lerping quaternion
       const targetQuaternion = airplaneRef.current.quaternion.clone();
-      airplaneRef.current.quaternion.slerp(targetQuaternion, 0.1); // Adjust 0.1 for smoother interpolation
+      airplaneRef.current.quaternion.slerp(targetQuaternion, 0.001); // Adjust 0.1 for smoother interpolation
 
       // Add banking effect by adjusting rotation.z (optional)
-      const bankAmount = -Math.atan2(tangent.y, tangent.x) * 0.05; // Adjust factor for desired banking
-      airplaneRef.current.rotation.z = THREE.MathUtils.lerp(
-        airplaneRef.current.rotation.z,
+      const bankAmount = -Math.atan2(tangent.y, tangent.x) * 0.0; // Adjust factor for desired banking
+      airplaneRef.current.rotation.x = THREE.MathUtils.lerp(
+        airplaneRef.current.rotation.x,
         bankAmount,
         0.1
       );
@@ -125,21 +130,30 @@ const FlightPath = ({ position, flight, setflight, setdestiniation }) => {
       <Line points={linePoints} color="white" opacity={1} lineWidth={10} />
 
       {/* Render the airplane with ref for animation */}
-      <Box ref={box1Ref} scale={[0.001, 1, 1]} position={delhi}>
+      <Box
+        ref={box1Ref}
+        scale={[0.001, 1, 1]}
+        position={[-5, 0, -5]}
+        rotation={[degToRad(0), degToRad(90), degToRad(0)]}
+      >
         <meshBasicMaterial color={"red"} />
       </Box>
 
-      <Box ref={box2Ref} scale={[0.001, 1, 1]} position={bengaluru}>
-        <meshBasicMaterial color={"red"} />
+      <Box ref={box2Ref} scale={[0.001, 1, 1]} position={[-2, 0, 5.5]}>
+        <meshBasicMaterial color={"blue"} />
       </Box>
 
       <group ref={airplaneRef}>
-        <Box scale={[0.01, .1, .01]} ref={planeref}>
+        <Box
+          scale={[0.1, 0.01, 0.01]}
+          rotation={[degToRad(0), degToRad(3), degToRad(0)]}
+          ref={planeref}
+        >
           <meshStandardMaterial color={"blue"} transparent opacity={1} />
         </Box>
         <Aeroplane
           scale={0.01}
-          rotation={[degToRad(-30), degToRad(30), degToRad(8)]}
+          rotation={[degToRad(-40), degToRad(30), degToRad(-10)]}
         />
 
         <Effects />
