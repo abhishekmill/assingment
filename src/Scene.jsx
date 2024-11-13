@@ -1,4 +1,11 @@
-import { Box, Cloud, OrbitControls, Sky, Stats } from "@react-three/drei";
+import {
+  Box,
+  Cloud,
+  OrbitControls,
+  Sky,
+  Sphere,
+  Stats,
+} from "@react-three/drei";
 import { Canvas, useLoader, useThree } from "@react-three/fiber";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { DoubleSide, TextureLoader } from "three";
@@ -18,13 +25,17 @@ const Scene = () => {
   const [flight, setflight] = useState(true);
   const [destiniation, setdestiniation] = useState("delhi");
 
-  const texture = useLoader(TextureLoader, "./earth.jpg");
+  const texture = useLoader(TextureLoader, "./earthmap.jpg");
   const nightTexture = useLoader(TextureLoader, "./earthHeight.png");
   const ind = useLoader(TextureLoader, "./ind.webp");
 
   useEffect(() => {
     console.log(flight);
   }, [flight]);
+
+  useEffect(() => {
+    nightTexture.offset.set(0.023, -0.020);
+  }, [nightTexture]);
 
   return (
     <div className="w-full h-screen">
@@ -40,12 +51,15 @@ const Scene = () => {
       </button>
       <Canvas camera={{ fov: 75 }}>
         <OrbitControls />
-        <ambientLight intensity={1.5} />
-        {/* <group position={[0,3,0]}>
-
-          
-        <Line points={linePoints} color={"red"} opacity={1} lineWidth={10} />
-        </group> */}
+        <ambientLight intensity={0.5} />
+        <Sphere scale={16}>
+          <meshStandardMaterial
+            map={texture}
+            emissiveMap={nightTexture}
+            emissive={0x00ff00}
+            emissiveIntensity={1}
+          />
+        </Sphere>
 
         <FlightPath
           setdestiniation={setdestiniation}
@@ -53,7 +67,6 @@ const Scene = () => {
           setflight={setflight}
           position={[0, 1, 0]}
         />
-
         <Base scale={100} />
         {/* <group position={[0, -1, 0]}>
           <Cloud
@@ -90,16 +103,6 @@ const Scene = () => {
         <Building scale={[0.005, 0.02, 0.005]} position={[-2, 0, 5]} />
         <Building
           scale={[0.005, 0.02, 0.005]}
-          position={[-3.5, 0, -3]}
-          rotation={[0, degToRad(80), 0]}
-        />
-        <Building
-          scale={[0.005, 0.02, 0.005]}
-          position={[-2, 0, 1]}
-          rotation={[0, degToRad(80), 0]}
-        />
-        <Building
-          scale={[0.005, 0.02, 0.005]}
           position={[-3.5, 0, -4.5]}
           rotation={[0, degToRad(80), 0]}
         />
@@ -109,13 +112,13 @@ const Scene = () => {
         <Tile scale={0.1} position={[-4, 0.1, 1]} />
         <Tile scale={0.1} position={[-3.4, 0.23, 3]} />
         <Tile scale={0.05} position={[-3.2, 0.23, 5]} />
-        <Tile scale={0.05} position={[-3.2, 0.23, 5]} />
         <group>
           <RandomBoxes position={[-3, 0, 0]} />
+          <RandomBoxes position={[-3, 0, 0]} />
         </group>
-        <Sky distance={80} rayleigh={23} sunPosition={[2, 1, 2]} />
+        <Sky sunPosition={[.3, 0.0, 0]} />
         <Stats />
-        {/* <fog attach="fog" args={["white", 4, 40]} far={5} /> */}
+        {/* <fog attach="fog" args={["white", 4, 40]} far={9} /> */}
       </Canvas>
     </div>
   );

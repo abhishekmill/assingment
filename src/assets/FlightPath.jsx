@@ -1,11 +1,12 @@
 import React, { useMemo, useRef, useState } from "react";
-import { Box, Line } from "@react-three/drei";
+import { Box, Line, Sphere, Stage } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import Aeroplane from "./Aeroplane";
 import * as THREE from "three";
 import { degToRad } from "three/src/math/MathUtils.js";
 import Effects from "../Effects";
 import { CuboidCollider, MeshCollider, RigidBody } from "@react-three/rapier";
+import RadarPulseDisc from "./Pulse";
 
 const LINE_NB_POINTS = 500;
 
@@ -23,12 +24,12 @@ const FlightPath = ({ position, flight, setflight, setdestiniation }) => {
         delhi,
         new THREE.Vector3(0, 0, -6),
         new THREE.Vector3(0, 2, 0),
-        new THREE.Vector3(3, 2, 2),
+        new THREE.Vector3(3, 3, 2),
         new THREE.Vector3(2, 0.5, 7),
         bengaluru,
-        new THREE.Vector3(-8, 0, 5),
-        new THREE.Vector3(-9, 1, 3),
-        new THREE.Vector3(-8, 0.5, 0),
+        new THREE.Vector3(-8, 2, 5),
+        new THREE.Vector3(-9, 3, 3),
+        new THREE.Vector3(-8, 2, 0),
       ],
       true,
       "catmullrom",
@@ -47,7 +48,7 @@ const FlightPath = ({ position, flight, setflight, setdestiniation }) => {
 
   useFrame((state, delta) => {
     if (!flight) {
-      
+      return;
       setT((t) => (t >= 1 ? 0 : t + delta * 0.0));
     }
 
@@ -78,11 +79,11 @@ const FlightPath = ({ position, flight, setflight, setdestiniation }) => {
       airplaneRef.current.rotation.x = THREE.MathUtils.lerp(
         airplaneRef.current.rotation.x,
         bankAmount,
-        0.1
+        0.01
       );
 
       // Animate the camera to follow the airplane with an offset
-      const cameraOffset = new THREE.Vector3(-3, 2, 1); // Adjust the offset for desired camera angle
+      const cameraOffset = new THREE.Vector3(-1.3, 2.5, 1); // Adjust the offset for desired camera angle
       const cameraTargetPosition = targetPosition.clone().add(cameraOffset);
 
       // Smoothly move the camera to follow the airplane
@@ -101,10 +102,6 @@ const FlightPath = ({ position, flight, setflight, setdestiniation }) => {
   const box1Ref = useRef();
   const box2Ref = useRef();
 
-  const handleCollision = (a) => {
-    console.log("Collision detected!", a);
-  };
-
   useFrame(() => {
     if (box1Ref.current && planeref.current) {
       // Create bounding boxes for both objects
@@ -114,11 +111,13 @@ const FlightPath = ({ position, flight, setflight, setdestiniation }) => {
 
       // Check for intersection
       if (box1Collider.intersectsBox(planeCollider)) {
-        handleCollision("delhi");
+        setdestiniation("banguluru");
+
         setflight(false);
       }
       if (box2Collider.intersectsBox(planeCollider)) {
-        handleCollision("banguluru");
+        setdestiniation("delhi");
+
         setflight(false);
       }
     }
@@ -128,12 +127,14 @@ const FlightPath = ({ position, flight, setflight, setdestiniation }) => {
     <group scale={1} position={position}>
       {/* Render the path line */}
       <Line points={linePoints} color="white" opacity={1} lineWidth={10} />
+      <RadarPulseDisc position={[-4, -0.6, -6]} scale={[3, 3, 3]} />
+      <RadarPulseDisc position={[-3, -.5, 5]} color="blue" scale={[3, 3, 3]} />
 
       {/* Render the airplane with ref for animation */}
       <Box
         ref={box1Ref}
         scale={[0.001, 1, 1]}
-        position={[-5, 0, -5]}
+        position={[-5.5, 1, -4]}
         rotation={[degToRad(0), degToRad(90), degToRad(0)]}
       >
         <meshBasicMaterial color={"red"} />
@@ -144,19 +145,26 @@ const FlightPath = ({ position, flight, setflight, setdestiniation }) => {
       </Box>
 
       <group ref={airplaneRef}>
-        <Box
-          scale={[0.1, 0.01, 0.01]}
-          rotation={[degToRad(0), degToRad(3), degToRad(0)]}
+        <Sphere
+          scale={[0.15, 0.1, 0.01]}
+          rotation={[degToRad(-40), degToRad(20), degToRad(10)]}
           ref={planeref}
         >
           <meshStandardMaterial color={"blue"} transparent opacity={1} />
-        </Box>
-        <Aeroplane
-          scale={0.01}
-          rotation={[degToRad(-40), degToRad(30), degToRad(-10)]}
-        />
+        </Sphere>
+        {/* <Stage
+          environment={"sunset"}
+          intensity={0.3}
+          shadows={false}
+          preset={"upfront"}
+        > */}
+          <Aeroplane
+            scale={0.01}
+            rotation={[degToRad(-40), degToRad(30), degToRad(-10)]}
+          />
+        {/* </Stage> */}
 
-        <Effects />
+        {/* <Effects /> */}
       </group>
     </group>
   );

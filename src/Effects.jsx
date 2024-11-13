@@ -1,11 +1,18 @@
-import { Bloom, EffectComposer } from "@react-three/postprocessing";
-import { RenderPass } from "postprocessing";
+import {
+  Autofocus,
+  Bloom,
+  EffectComposer,
+  Sepia,
+  Vignette,
+} from "@react-three/postprocessing";
+import { BlendFunction, RenderPass } from "postprocessing";
 import React from "react";
 
 const Effects = () => {
   return (
     <EffectComposer>
-      <Bloom intensity={0.1} />
+      <Vignette darkness={[0.5]} />
+      {/* <Sepia blendFunction={BlendFunction.HUE} intensity={.2} /> */}
     </EffectComposer>
   );
 };
