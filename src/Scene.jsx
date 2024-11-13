@@ -1,13 +1,6 @@
-import {
-  Cloud,
-  Clouds,
-  Line,
-  OrbitControls,
-  Sky,
-  Stats,
-} from "@react-three/drei";
+import { Box, Cloud, OrbitControls, Sky, Stats } from "@react-three/drei";
 import { Canvas, useLoader, useThree } from "@react-three/fiber";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { DoubleSide, TextureLoader } from "three";
 import Effects from "./Effects";
 import RandomBoxes from "./RandomBox";
@@ -15,66 +8,54 @@ import { degToRad } from "three/src/math/MathUtils.js";
 import { Base } from "./Map";
 import { Building } from "./assets/Building";
 import Tile from "./assets/Tile";
-import { Aeroplane } from "./assets/Aeroplane";
+import { Physics, RigidBody } from "@react-three/rapier";
+// import { Aeroplane } from "./assets/Aeroplane";
 import * as Three from "three";
+import FlightPath from "./assets/FlightPath";
 
 const LINE_NB_POINTS = 500;
 const Scene = () => {
-  const curve = useMemo(() => {
-    return new Three.CatmullRomCurve3(
-      [
-        new Three.Vector3(0, 0, 0),
-        new Three.Vector3(0, 0, -10),
-        new Three.Vector3(-2, 0, -20),
-        new Three.Vector3(-3, 0, -30),
-        new Three.Vector3(0, 0, -40),
-        new Three.Vector3(5, 0, -50),
-      ],
-      false,
-      "catmullrom",
-      0.5
-    );
-  }, []);
-
-  const linePoints = useMemo(() => {
-    return curve.getPoints(LINE_NB_POINTS);
-  }, [curve]);
+  const [flight, setflight] = useState(true);
+  const [destiniation, setdestiniation] = useState("delhi");
 
   const texture = useLoader(TextureLoader, "./earth.jpg");
   const nightTexture = useLoader(TextureLoader, "./earthHeight.png");
   const ind = useLoader(TextureLoader, "./ind.webp");
+
+  useEffect(() => {
+    console.log(flight);
+  }, [flight]);
+
   return (
     <div className="w-full h-screen">
-      <Canvas>
+      <button
+        onClick={() => setflight(true)}
+        className="absolute w-[150px] h-16 rounded hover:bg-yellow-800 duration-300 bg-red-800 top-[15%] left-[47%] z-20"
+      >
+        <h2 className="text-white capitalize font-bold text-xl">
+          lets, Fly to
+          <br />
+          {destiniation}
+        </h2>
+      </button>
+      <Canvas camera={{ fov: 75 }}>
         <OrbitControls />
-        <ambientLight intensity={0.8} />
-
-        <group position={[0,3,0]}>
+        <ambientLight intensity={1.5} />
+        {/* <group position={[0,3,0]}>
 
           
         <Line points={linePoints} color={"red"} opacity={1} lineWidth={10} />
-        </group>
+        </group> */}
 
-        {/* <pointLight position={[0, 15, -5]} distance={100} intensity={100} /> */}
-        {/* <Sphere>
-          <meshStandardMaterial
-            map={texture}
-            displacementMap={nightTexture}
-            displacementScale={4}
-            emissiveMap={nightTexture}
-            emissiveIntensity={1.5}
-            emissive={0xffd700}
-          />
-        </Sphere> */}
-        {/* <Sky sunPosition={[0, 6, 0]} /> */}
-        {/* <mesh rotation={[Math.PI / 2, degToRad(180), 0]} scale={60}>
-          <planeGeometry />
-          <meshStandardMaterial side={DoubleSide} map={ind} />
-        </mesh> */}
+        <FlightPath
+          setdestiniation={setdestiniation}
+          flight={flight}
+          setflight={setflight}
+          position={[0, 1, 0]}
+        />
 
-        <Aeroplane scale={0.02} position={[-3, 1.5, -3]} />
         <Base scale={100} />
-        <group position={[0, -1, 0]}>
+        {/* <group position={[0, -1, 0]}>
           <Cloud
             position={[-3, 5, -5]}
             speed={0.2}
@@ -105,9 +86,8 @@ const Scene = () => {
             color={"pink"}
             opacity={0.75}
           />
-        </group>
+        </group> */}
         <Building scale={[0.005, 0.02, 0.005]} position={[-2, 0, 5]} />
-
         <Building
           scale={[0.005, 0.02, 0.005]}
           position={[-3.5, 0, -3]}
@@ -133,11 +113,9 @@ const Scene = () => {
         <group>
           <RandomBoxes position={[-3, 0, 0]} />
         </group>
-        <Sky />
-
+        <Sky distance={80} rayleigh={23} sunPosition={[2, 1, 2]} />
         <Stats />
-        <Effects />
-        {/* <fog attach="fog" args={["pink", 4, 40]} far={5} /> */}
+        {/* <fog attach="fog" args={["white", 4, 40]} far={5} /> */}
       </Canvas>
     </div>
   );

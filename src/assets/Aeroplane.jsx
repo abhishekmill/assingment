@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 
-export function Aeroplane(props) {
+function Aeroplane(props) {
   const { nodes, materials } = useGLTF("/very-cute-airplane.glb");
   return (
     <group {...props} dispose={null}>
@@ -436,3 +436,5 @@ export function Aeroplane(props) {
 }
 
 useGLTF.preload("/very-cute-airplane.glb");
+
+export default Aeroplane;
