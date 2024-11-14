@@ -83,11 +83,11 @@ const FlightPath = ({ position, flight, setflight, setdestiniation }) => {
       );
 
       // Animate the camera to follow the airplane with an offset
-      const cameraOffset = new THREE.Vector3(-1.3, 2.5, 1); // Adjust the offset for desired camera angle
+      const cameraOffset = new THREE.Vector3(-1, 3, .5); // Adjust the offset for desired camera angle
       const cameraTargetPosition = targetPosition.clone().add(cameraOffset);
 
       // Smoothly move the camera to follow the airplane
-      camera.position.lerp(cameraTargetPosition, 0.1);
+      camera.position.lerp(cameraTargetPosition, 0.9);
 
       // Make the camera look at the airplane's current position
       camera.lookAt(airplaneRef.current.position);
@@ -152,17 +152,17 @@ const FlightPath = ({ position, flight, setflight, setdestiniation }) => {
         >
           <meshStandardMaterial color={"blue"} transparent opacity={1} />
         </Sphere>
-        {/* <Stage
+        <Stage
           environment={"sunset"}
           intensity={0.3}
           shadows={false}
           preset={"upfront"}
-        > */}
+        >
           <Aeroplane
             scale={0.01}
             rotation={[degToRad(-40), degToRad(30), degToRad(-10)]}
           />
-        {/* </Stage> */}
+        </Stage>
 
         {/* <Effects /> */}
       </group>

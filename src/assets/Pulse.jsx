@@ -44,14 +44,14 @@ const RadarPulseMaterial = shaderMaterial(
 // Extend the shader material to be used in JSX
 extend({ RadarPulseMaterial });
 
-const RadarPulseDisc = ({ position, scale, color='red' }) => {
+const RadarPulseDisc = ({ position, rotation, scale, color = "red" }) => {
   const materialRef = useRef();
   const meshRef = useRef();
 
   // Animate the uTime uniform to drive the radar pulse expansion
   useFrame((state, delta) => {
     if (materialRef.current) {
-      const scale = Math.sin(state.clock.getElapsedTime()) * 0.5 ;
+      const scale = Math.sin(state.clock.getElapsedTime()) * 0.5;
       meshRef.current.scale.x = scale;
       meshRef.current.scale.y = scale;
       console.log(delta);
@@ -62,9 +62,10 @@ const RadarPulseDisc = ({ position, scale, color='red' }) => {
   });
 
   return (
-    <group position={position} scale={scale}>
+    <group position={position} rotation={rotation} scale={scale}>
       <mesh ref={meshRef} rotation={[-Math.PI / 2, 0, 0]}>
-        <circleGeometry args={[1, 64, 64]} /> {/* Disc-shaped plane for radar */}
+        <circleGeometry args={[1, 64, 64]} />{" "}
+        {/* Disc-shaped plane for radar */}
         <radarPulseMaterial
           ref={materialRef}
           uOpacity={1}

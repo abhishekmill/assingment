@@ -12,15 +12,12 @@ export function Base(props) {
       <mesh
         castShadow
         receiveShadow
-        
         geometry={nodes.cleanerpPlane1_1.geometry}
         rotation={[Math.PI / 2, 0, 0]}
         scale={0.01}
       >
-        <meshStandardMaterial
-        map={texture}
-        />
-        </mesh>
+        <meshStandardMaterial map={texture} />
+      </mesh>
       <mesh
         castShadow
         receiveShadow
