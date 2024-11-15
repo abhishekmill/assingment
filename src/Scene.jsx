@@ -21,6 +21,7 @@ import * as Three from "three";
 import FlightPath from "./assets/FlightPath";
 import RadarPulseDisc from "./assets/Pulse";
 import { useControls } from "leva";
+import FogControl from "./assets/Fog";
 const LINE_NB_POINTS = 500;
 const Scene = () => {
   const [destiniation, setdestiniation] = useState("delhi");
@@ -34,15 +35,14 @@ const Scene = () => {
   }, [nightTexture]);
 
   const sphereRef = useRef();
-
   // Leva controls for position and rotation
   const { positionX, positionY, positionZ, rotationX, rotationY, rotationZ } =
     useControls({
-      positionX: { value: 0, min: -10, max: 10, step: 0.1 },
-      positionY: { value: 1, min: -10, max: 10, step: 0.1 },
-      positionZ: { value: 0, min: -10, max: 10, step: 0.1 },
-      rotationX: { value: 0, min: -Math.PI, max: Math.PI, step: 0.1 },
-      rotationY: { value: 0, min: -Math.PI, max: Math.PI, step: 0.1 },
+      positionX: { value: -0.2, min: -10, max: 10, step: 0.1 },
+      positionY: { value: -3.5, min: -10, max: 10, step: 0.1 },
+      positionZ: { value: 2.1, min: -10, max: 10, step: 0.1 },
+      rotationX: { value: -0.1, min: -Math.PI, max: Math.PI, step: 0.1 },
+      rotationY: { value: -3, min: -Math.PI, max: Math.PI, step: 0.1 },
       rotationZ: { value: 0, min: -Math.PI, max: Math.PI, step: 0.1 },
     });
 
@@ -74,7 +74,7 @@ const Scene = () => {
             scale={16}
           >
             <meshStandardMaterial
-              side={DoubleSide}
+              // side={DoubleSide}
               map={texture}
               emissiveMap={nightTexture}
               emissive={0x00ff00}
@@ -101,11 +101,31 @@ const Scene = () => {
           <FlightPath
             setAnimsts={setAnimsts}
             animsts={animsts}
+            destiniation={destiniation}
             setdestiniation={setdestiniation}
             position={[0, 1, 0]}
           />
           <Base scale={100} />
           <group position={[0, 1, 0]}>
+            <Cloud
+              position={[-9, 0, 5]}
+              speed={0.2}
+              color={"white"}
+              opacity={1}
+            />
+            <Cloud
+              position={[-9, 0, 2]}
+              speed={0.2}
+              color={"white"}
+              opacity={1}
+            />
+            <Cloud
+              position={[-9, 0, 10]}
+              speed={0.2}
+              color={"red"}
+              opacity={1}
+            />
+        
             <Cloud
               position={[-3, 2, -5]}
               speed={0.2}
@@ -151,9 +171,10 @@ const Scene = () => {
           <Tile scale={0.1} position={[-3.4, 0.23, 3]} />
           <Tile scale={0.05} position={[-3.2, 0.23, 5]} />
         </group>
-        <Sky sunPosition={[0.3, 0.0, 0]} />
+        <FogControl destiniation={destiniation} />
+        {/* <fog attach="fog" far={60} /> */}
+        {/* <Sky sunPosition={[0.3, 0.0, 0]} /> */}
         <Stats />
-        {/* <fog attach="fog" args={["white", 4, 40]} far={8} /> */}
       </Canvas>
     </div>
   );

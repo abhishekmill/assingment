@@ -4,13 +4,17 @@ import { useFrame, useThree } from "@react-three/fiber";
 import Aeroplane from "./Aeroplane";
 import * as THREE from "three";
 import { degToRad } from "three/src/math/MathUtils.js";
-import Effects from "../Effects";
-import { CuboidCollider, MeshCollider, RigidBody } from "@react-three/rapier";
 import RadarPulseDisc from "./Pulse";
 import gsap from "gsap";
 const LINE_NB_POINTS = 500;
 
-const FlightPath = ({ position, setdestiniation, setAnimsts, animsts }) => {
+const FlightPath = ({
+  position,
+  setdestiniation,
+  destiniation,
+  setAnimsts,
+  animsts,
+}) => {
   // Define Delhi and Bengaluru positions
   const planeref = useRef();
 
@@ -72,24 +76,30 @@ const FlightPath = ({ position, setdestiniation, setAnimsts, animsts }) => {
       },
     });
   }
+
   useEffect(() => {
-    // Determine the target offset based on `animsts`
-    const targetOffset = animsts
-      ? new THREE.Vector3(-1, 3, 0.5)
-      : cameraOffset2;
+    let targetOffset;
 
-    // Set the initial camera offset and then animate to the target
-    setCameraOffset(targetOffset);
-    animateCameraOffset(targetOffset);
+    if (airplaneRef.current && airplaneRef.current.position.z >= 2) {
+      // If position >= 2, set the target offset based on `animsts`
+      targetOffset = animsts ? new THREE.Vector3(-1, 3, 0.5) : cameraOffset2;
 
-    console.log(targetOffset);
-    console.log(animsts ? "zoomin" : "zoomout");
-  }, [animsts]);
+      // Set flight to true and update camera offset
+      setCameraOffset(targetOffset);
+      animateCameraOffset(targetOffset);
+
+      console.log("Airplane position >= 2: " + targetOffset);
+    } else {
+      // If position < 2, don't update the camera
+      console.log("Airplane position < 2, no camera update.");
+
+      setflight(animsts);
+    }
+  }, [animsts, airplaneRef]);
 
   useFrame((state, delta) => {
-    console.log(animsts);
-
     if (!flight) {
+      // return
       setT((t) => (t >= 1 ? 0 : t + delta * 0.0));
     }
 
@@ -129,15 +139,7 @@ const FlightPath = ({ position, setdestiniation, setAnimsts, animsts }) => {
       camera.position.lerp(cameraTargetPosition, 0.9);
 
       // Make the camera look at the airplane's current position
-      if (cameraOffset.y < 20) {
-        camera.lookAt(airplaneRef.current.position);
-      }
-      if (cameraOffset.y > 20) {
-        camera.lookAt(new THREE.Vector3(-1, 10, 7));
-        
-      }
-
-    
+      camera.lookAt(airplaneRef.current.position);
     }
   });
 
@@ -174,6 +176,8 @@ const FlightPath = ({ position, setdestiniation, setAnimsts, animsts }) => {
 
   return (
     <group scale={1} position={position}>
+      <fog attach="fog" far={2} />
+
       {/* Render the path line */}
       <Line points={linePoints} color="white" opacity={1} lineWidth={10} />
       <RadarPulseDisc position={[-4, -0.6, -6]} scale={[3, 3, 3]} />
@@ -186,11 +190,11 @@ const FlightPath = ({ position, setdestiniation, setAnimsts, animsts }) => {
         position={[-5.5, 1, -4]}
         rotation={[degToRad(0), degToRad(90), degToRad(0)]}
       >
-        <meshBasicMaterial color={"red"} />
+        <meshBasicMaterial color={"red"} opacity={0} transparent />
       </Box>
 
       <Box ref={box2Ref} scale={[0.001, 1, 1]} position={[-2, 0, 5.5]}>
-        <meshBasicMaterial color={"blue"} />
+        <meshBasicMaterial color={"blue"} opacity={0} transparent />
       </Box>
 
       <group ref={airplaneRef}>
