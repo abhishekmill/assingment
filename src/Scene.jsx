@@ -62,7 +62,7 @@ const Scene = () => {
             setAnimsts(!animsts);
           }
         }}
-        className="absolute w-[100px] h-12 rounded bg-yellow-300 hover:bg-yellow-800 
+        className="absolute w-[100px] h-12 rounded bg-yellow-500 hover:bg-yellow-800 
         
         duration-300 
         
