@@ -47,18 +47,28 @@ const Scene = () => {
     });
 
   return (
-    <div className="w-full h-screen">
+    <div className="w-full h-screen flex justify-center ">
+      <h1
+        className="capitalize absolute z-10  top-[5vh] 
+      font-bold text-white text-4xl  px-20 py-10 rounded-md  backdrop-blur-sm bg-red-600 bg-opacity-5
+        "
+      >
+        {" "}
+        lets, Fly to {destiniation}
+      </h1>
       <button
         onClick={() => {
-          setAnimsts(!animsts);
+          if (!animsts) {
+            setAnimsts(!animsts);
+          }
         }}
-        className="absolute w-[150px] h-16 rounded hover:bg-yellow-800 duration-300 bg-red-800 top-[15%] left-[47%] z-20"
+        className="absolute w-[100px] h-12 rounded bg-yellow-300 hover:bg-yellow-800 
+        
+        duration-300 
+        
+        top-[85%]  z-20"
       >
-        <h2 className="text-white capitalize font-bold text-xl">
-          lets, Fly to
-          <br />
-          {destiniation}
-        </h2>
+        <h2 className="text-white capitalize font-bold text-xl">Fly</h2>
       </button>
       <Canvas camera={{ fov: 75 }}>
         <OrbitControls />
@@ -125,7 +135,7 @@ const Scene = () => {
               color={"red"}
               opacity={1}
             />
-        
+
             <Cloud
               position={[-3, 2, -5]}
               speed={0.2}
