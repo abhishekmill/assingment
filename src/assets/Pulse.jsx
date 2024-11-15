@@ -54,7 +54,7 @@ const RadarPulseDisc = ({ position, rotation, scale, color = "red" }) => {
       const scale = Math.sin(state.clock.getElapsedTime()) * 0.5;
       meshRef.current.scale.x = scale;
       meshRef.current.scale.y = scale;
-      console.log(delta);
+      // console.log(delta);
       // materialRef.current.scale.x = scale
 
       materialRef.current.uTime += delta; // Increments time for pulse expansion

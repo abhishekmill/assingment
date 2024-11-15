@@ -20,28 +20,38 @@ import { Physics, RigidBody } from "@react-three/rapier";
 import * as Three from "three";
 import FlightPath from "./assets/FlightPath";
 import RadarPulseDisc from "./assets/Pulse";
-
+import { useControls } from "leva";
 const LINE_NB_POINTS = 500;
 const Scene = () => {
-  const [flight, setflight] = useState(true);
   const [destiniation, setdestiniation] = useState("delhi");
-
+  const [animsts, setAnimsts] = useState(false);
   const texture = useLoader(TextureLoader, "./earthmap.jpg");
   const nightTexture = useLoader(TextureLoader, "./earthHeight.png");
   const ind = useLoader(TextureLoader, "./ind.webp");
 
   useEffect(() => {
-    console.log(flight);
-  }, [flight]);
-
-  useEffect(() => {
     nightTexture.offset.set(0.025, -0.02);
   }, [nightTexture]);
+
+  const sphereRef = useRef();
+
+  // Leva controls for position and rotation
+  const { positionX, positionY, positionZ, rotationX, rotationY, rotationZ } =
+    useControls({
+      positionX: { value: 0, min: -10, max: 10, step: 0.1 },
+      positionY: { value: 1, min: -10, max: 10, step: 0.1 },
+      positionZ: { value: 0, min: -10, max: 10, step: 0.1 },
+      rotationX: { value: 0, min: -Math.PI, max: Math.PI, step: 0.1 },
+      rotationY: { value: 0, min: -Math.PI, max: Math.PI, step: 0.1 },
+      rotationZ: { value: 0, min: -Math.PI, max: Math.PI, step: 0.1 },
+    });
 
   return (
     <div className="w-full h-screen">
       <button
-        onClick={() => setflight(true)}
+        onClick={() => {
+          setAnimsts(!animsts);
+        }}
         className="absolute w-[150px] h-16 rounded hover:bg-yellow-800 duration-300 bg-red-800 top-[15%] left-[47%] z-20"
       >
         <h2 className="text-white capitalize font-bold text-xl">
@@ -52,9 +62,12 @@ const Scene = () => {
       </button>
       <Canvas camera={{ fov: 75 }}>
         <OrbitControls />
-        <ambientLight intensity={.5} />
-
-        <group>
+        <ambientLight intensity={0.5} />
+        <group
+          ref={sphereRef}
+          position={[positionX, positionY, positionZ]}
+          rotation={[rotationX, rotationY, rotationZ]}
+        >
           <Sphere
             args={[1, 42, 42]}
             rotation={[degToRad(40), degToRad(0), degToRad(10)]}
@@ -81,15 +94,14 @@ const Scene = () => {
             scale={1}
           />
         </group>
-
         <group
         // position={[0,3,0]}
         // rotation={[degToRad(-20), degToRad(176), degToRad(0)]}
         >
           <FlightPath
+            setAnimsts={setAnimsts}
+            animsts={animsts}
             setdestiniation={setdestiniation}
-            flight={flight}
-            setflight={setflight}
             position={[0, 1, 0]}
           />
           <Base scale={100} />
