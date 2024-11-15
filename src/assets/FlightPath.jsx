@@ -203,7 +203,7 @@ const FlightPath = ({
           rotation={[degToRad(-40), degToRad(20), degToRad(10)]}
           ref={planeref}
         >
-          <meshStandardMaterial color={"blue"} transparent opacity={1} />
+          <meshStandardMaterial color={"blue"} transparent opacity={0} />
         </Sphere>
         <Stage
           environment={"sunset"}

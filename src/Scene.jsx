@@ -20,7 +20,7 @@ import { Physics, RigidBody } from "@react-three/rapier";
 import * as Three from "three";
 import FlightPath from "./assets/FlightPath";
 import RadarPulseDisc from "./assets/Pulse";
-import { useControls } from "leva";
+import { Leva, useControls } from "leva";
 import FogControl from "./assets/Fog";
 const LINE_NB_POINTS = 500;
 const Scene = () => {
@@ -70,6 +70,7 @@ const Scene = () => {
       >
         <h2 className="text-white capitalize font-bold text-xl">Fly</h2>
       </button>
+      <Leva hidden />
       <Canvas camera={{ fov: 75 }}>
         <OrbitControls />
         <ambientLight intensity={0.5} />
@@ -184,7 +185,7 @@ const Scene = () => {
         <FogControl destiniation={destiniation} />
         {/* <fog attach="fog" far={60} /> */}
         {/* <Sky sunPosition={[0.3, 0.0, 0]} /> */}
-        <Stats />
+        {/* <Stats  /> */}
       </Canvas>
     </div>
   );
